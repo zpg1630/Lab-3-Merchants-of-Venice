@@ -17,10 +17,9 @@ def read_merchant(filename: str) -> List[Merchant]:
     merchants = list()
     with open(filename) as f:
         for line in f:
-            fields = line.split(',')
+            fields = line.split(' ')
             merchants.append(Merchant(
-                name=fields[1],
-                location=int(fields[0]),
+                name=fields[0],
+                location=int(fields[1]),
             ))
-    print(merchants)
     return merchants
