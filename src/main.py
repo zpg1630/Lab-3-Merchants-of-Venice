@@ -8,33 +8,48 @@ from os import path
 
 def main():
     choice = True
+    # main loop for program control
     while choice:
+        # used for sum of distances
         distance = 0
         speed = input('Enter the search type [slow|fast] or "quit" to quit: ')
+        # exit loop
         if speed == 'quit':
             choice = not choice
+        # start sorting
         elif speed == 'slow' or speed == 'fast':
+            # get the file
             filename = 'data\\' + input('Enter the file name: ')
+            # check if it exists
             if path.exists(filename):
+                # read merchants from file
                 merchant = merchants.read_merchant(filename)
                 print('Number of merchants: ', len(merchant))
+                # quick sort
                 if speed == 'slow':
-                    # quick sort
+                    # start timer
                     start_1 = time.perf_counter()
+                    # call quick sort function
                     merchant = quick_sort(merchant)
+                    # stop timer
                     stop_1 = time.perf_counter()
                     print('Elapsed time: ', stop_1 - start_1)
                     print('Optimal store location: ', merchant[len(merchant) // 2])
+                    # calculate sum
                     for _ in range(len(merchant)):
                         distance += abs(merchant[_].location-merchant[len(merchant) // 2].location)
                     print(distance)
+                # quick select
                 elif speed == 'fast':
-                    # quick select
+                    # start timer
                     start_2 = time.perf_counter()
+                    # call quick select
                     optimal_merchant = quick_select(merchant, len(merchant) // 2)
+                    # stop timer
                     stop_2 = time.perf_counter()
                     print('Elapsed time: ', stop_2 - start_2)
                     print('Optimal store location: ', optimal_merchant)
+                    # calculate sum
                     for _ in range(len(merchant)):
                         distance += abs(merchant[_].location-optimal_merchant.location)
                     print(distance)
@@ -80,12 +95,16 @@ def quick_sort(data: List[merchants.Merchant]) -> List[merchants.Merchant]:
 
 def partition(lst: List[merchants.Merchant], pivot_index=0):
     i = 0
+    # pivot
     if pivot_index != 0:
         lst[0], lst[pivot_index] = lst[pivot_index], lst[0]
+    # sort
     for j in range(len(lst) - 1):
+        # shift positions
         if lst[j + 1].location < lst[0].location:
             lst[j + 1], lst[i + 1] = lst[i + 1], lst[j + 1]
             i += 1
+    # portion of list that was sorted
     lst[0], lst[i] = lst[i], lst[0]
     return lst, i
 
@@ -96,13 +115,17 @@ def quick_select(lst: List[merchants.Merchant], k):
         # return the only merchant
         return lst[0]
     else:
+        # start partition
         lst_part = partition(lst, randrange(len(lst)))
         lst = lst_part[0]  # partitioned array
         j = lst_part[1]  # pivot index
+        # target found
         if j == k:
             return lst[j]
+        # search larger
         elif j > k:
             return quick_select(lst[:j], k)
+        # Search smaller
         else:
             k = k - j - 1
             return quick_select(lst[(j + 1):], k)
